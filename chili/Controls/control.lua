@@ -107,7 +107,7 @@ function Control:New(obj)
   --// add children after UpdateClientArea! (so relative width/height can be applied correctly)
   if (cn) then
     for i=1,#cn do
-      obj:AddChild(cn[i], true)
+      obj:AddChild(cn[i],true)
     end
   end
 
@@ -302,7 +302,7 @@ function Control:GetRelativeBox()
     end
   end
 
-  return {left, top, width, height}
+  return {left,top,width,height}
 end
 
 
@@ -330,11 +330,6 @@ function Control:UpdateClientArea()
     self._oldwidth_uca  = self.width
     self._oldheight_uca = self.height
   end
-
-if (self.debug) then
-  Spring.Echo(self.name, self.width, self.height, self._realignRequested)
-end
-
   self:Invalidate() --FIXME correct place?
 end
 
