@@ -438,7 +438,7 @@ function DrawScrollPanelBorder(self)
   local clientX,clientY,clientWidth,clientHeight = unpack4(self.clientArea)
   local contX,contY,contWidth,contHeight = unpack4(self.contentArea)
 
-  gl.Color(1,1,1,1)
+  gl.Color(self.backgroundColor)
 
   do
       TextureHandler.LoadTexture(0,self.BorderTileImage,self)
@@ -468,7 +468,7 @@ function DrawScrollPanel(obj)
   local clientX,clientY,clientWidth,clientHeight = unpack4(obj.clientArea)
   local contX,contY,contWidth,contHeight = unpack4(obj.contentArea)
 
-  gl.Color(1,1,1,1)
+  gl.Color(obj.backgroundColor)
 
   if (obj.BackgroundTileImage) then
       TextureHandler.LoadTexture(0,obj.BackgroundTileImage,obj)
@@ -489,6 +489,8 @@ function DrawScrollPanel(obj)
       gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, obj.x,obj.y,width,height, skLeft,skTop,skRight,skBottom, tw,th, 0)
       gl.Texture(0,false)
   end
+  
+  gl.Color(1,1,1,1)
 
   if obj._vscrollbar then
     local x = obj.x + clientX + clientWidth
@@ -573,11 +575,12 @@ function DrawCheckbox(obj)
 
   local skLeft,skTop,skRight,skBottom = unpack4(obj.tiles)
 
-  local texInfo = gl.TextureInfo(obj.TileImageFG) or {xsize=1, ysize=1}
-  local tw,th = texInfo.xsize, texInfo.ysize
 
   gl.Color(1,1,1,1)
   TextureHandler.LoadTexture(0,obj.TileImageBK,obj)
+
+  local texInfo = gl.TextureInfo(obj.TileImageBK) or {xsize=1, ysize=1}
+  local tw,th = texInfo.xsize, texInfo.ysize
     gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, x,y,w,h, skLeft,skTop,skRight,skBottom, tw,th, 0)
   --gl.Texture(0,false)
 

@@ -85,38 +85,33 @@ end
 
 function LayoutPanel:_JustCenterItemsH(startCell,endCell,freeSpace)
   local _cells = self._cells
-  local perItemAlloc = freeSpace / ((endCell - startCell) + 1)
-  local n=0
-
+  local perItemHalfAlloc = (freeSpace/2) / ((endCell+1) - startCell)
   for i=startCell,endCell do
     local cell = _cells[i]
     --if (self.orientation == "horizontal") then
-      cell[1] = cell[1] + n * perItemAlloc
-      cell[3] = cell[3] + perItemAlloc
+      cell[1] = cell[1] + perItemHalfAlloc
     --else
-    --  cell[2] = cell[2] + n * perItemHalfAlloc
-    --  cell[4] = cell[4] + perItemHalfAlloc
+    --  cell[2] = cell[2] + perItemHalfAlloc
     --end
-    n = n+1
   end
 end
 
 function LayoutPanel:_JustCenterItemsV(startCell,endCell,freeSpace)
+--[[
   local _cells = self._cells
-  local perItemAlloc = freeSpace / ((endCell - startCell) + 1)
-  local n=0
+  --local startCell = 1
+  --local endCell = #_cells
 
+  local perItemHalfAlloc = (freeSpace/2) / ((endCell+1) - startCell)
   for i=startCell,endCell do
     local cell = _cells[i]
     --if (self.orientation == "horizontal") then
-      cell[2] = cell[2] + n * perItemAlloc
-      cell[4] = cell[4] + perItemAlloc
+      cell[2] = cell[2] + perItemHalfAlloc
     --else
-    --  cell[1] = cell[1] + n * perItemHalfAlloc
-    --  cell[3] = cell[3] + perItemHalfAlloc
+    --  cell[1] = cell[1] + perItemHalfAlloc
     --end
-    n = n+1
   end
+--]]
 end
 
 
@@ -228,6 +223,7 @@ end
 
 function LayoutPanel:_AutoArrangeOrdinate(freeSpace)
   if (not self.autoArrangeV) then
+--[[
     if (self.centerItems) then
       local startCell = 1
       local endCell = 1
@@ -237,6 +233,7 @@ function LayoutPanel:_AutoArrangeOrdinate(freeSpace)
         startCell = endCell + 1
       end
     end
+--]]
     return
   end
 
@@ -357,21 +354,9 @@ function LayoutPanel:GetMaxWeight()
   return mweightx,mweighty,weightx, weighty
 end
 
+--//=============================================================================
 
 function LayoutPanel:_GetMaxChildConstraints(child)
-  local children = self.children
-
-  if (self._cells and not self._inUpdateLayout) then
-    for i=1, #children do
-      if CompareLinks(children[i], child) then
-        local cell = self._cells[i]
-        if (cell) then
-          return unpack4(cell)
-        end
-      end
-    end
-  end
-
   local itemPadding = self.itemPadding
   local margin      = child.margin or self.itemMargin
   local maxChildWidth  = -margin[1] - itemPadding[1] + self.clientWidth  - itemPadding[3] - margin[3]
