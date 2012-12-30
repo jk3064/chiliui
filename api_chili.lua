@@ -4,7 +4,7 @@
 function widget:GetInfo()
   return {
     name      = "Chili Framework",
-    desc      = "hot GUI Framework",
+    desc      = "Hot GUI Framework",
     author    = "jK & quantum",
     date      = "WIP",
     license   = "GPLv2",
@@ -24,12 +24,12 @@ local Chili
 local screen0
 local th
 local tk
-
+CHILI_DIRNAME = "LuaUI/Widgets/chili/" --change as needed
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 function widget:Initialize()
-  Chili = VFS.Include(LUAUI_DIRNAME.."Widgets/chili/core.lua")
+  Chili = VFS.Include(CHILI_DIRNAME.."core.lua")
 
   screen0 = Chili.Screen:New{}
   th = Chili.TextureHandler
@@ -51,7 +51,7 @@ function widget:Shutdown()
 end
 
 function widget:Dispose()
-  screen0:Dipsose()
+  screen0:Dispose()
 end
 
 --------------------------------------------------------------------------------
@@ -129,8 +129,15 @@ function widget:MouseWheel(up,value)
   return screen0:MouseWheel(x,y,up,value,mods)
 end
 
+function widget:KeyPress(key, mods, isRepeat, label, unicode)
+  return screen0:KeyPress(key, mods, isRepeat, label, unicode)
+end
 
 
+function widget:ViewResize(vsx, vsy) 
+	screen0.width = vsx 
+	screen0.height= vsy
+end 
 
 widget.TweakIsAbove      = widget.IsAbove
 widget.TweakMousePress   = widget.MousePress

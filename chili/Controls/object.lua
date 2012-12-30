@@ -24,6 +24,7 @@ Object = {
   OnMouseUp    = {},
   OnMouseMove  = {},
   OnMouseWheel = {},
+  OnKeyPress   = {},
 
   disableChildrenHitTest = false, --// if set childrens are not clickable/draggable etc - their mouse events are not processed
 }
@@ -281,16 +282,16 @@ function Object:ClearChildren()
   --FIXME instead of disposing perhaps just unlink from parent?
   --FIXME clear hidden children too!
 
-  --// maske it faster
+  --// make it faster
   local old = self.preserveChildrenOrder
   self.preserveChildrenOrder = false
 
   --// remove all children  
     for i=1,#self.children_hidden do
-      self:ShoweChild(self.children_hidden[i])
+      self:ShowChild(self.children_hidden[i])
     end
 
-    for i=1,#self.children do
+    for i=#self.children,1,-1 do
       self:RemoveChild(self.children[i])
     end
 
@@ -421,15 +422,26 @@ function Object:SetChildLayer(child,layer)
 end
 
 
-function Object:SetLayer(layer)
-  if (self.parent) then
-    (self.parent):SetChildLayer(self,layer)
+function Object:SetLayer(child, layer)
+  child = UnlinkSafe(child)
+  local children = self.children
+
+  --// it isn't at the same pos anymore, search it!
+  for i=1,#children do
+    if (UnlinkSafe(children[i]) == child) then
+      table.remove(children,i)
+      break
+    end
   end
+  table.insert(children,layer,child)
+  self:Invalidate()
 end
 
 
 function Object:BringToFront()
-  self:SetLayer(1)
+  if (self.parent) then
+    (self.parent):SetLayer(self,1)
+  end
 end
 
 --//=============================================================================
@@ -602,6 +614,9 @@ end
 
 
 function Object:CallChildrenHT(eventname, x, y, ...)
+  if self.disableChildrenHitTest then
+    return nil
+  end
   local children = self.children
   for i=1,#children do
     local c = children[i]
@@ -619,6 +634,9 @@ end
 
 
 function Object:CallChildrenHTWeak(eventname, x, y, ...)
+  if self.disableChildrenHitTest then
+    return nil
+  end
   local children = self.children
   for i=1,#children do
     local c = children[i]
@@ -795,9 +813,13 @@ function Object:MouseWheel(...)
   return self:CallChildrenHTWeak('MouseWheel', ...)
 end
 
+function Object:KeyPress(...)
+  if (self:CallListeners(self.OnKeyPress, ...)) then
+    return self
+  end
+
+  return false
+end
+
 --//=============================================================================
-
-
-
-
 

@@ -8,6 +8,7 @@ Control = Object:Inherit{
   borderColor2    = {0,0,0,0.8},
   backgroundColor = {0.8, 0.8, 1, 0.4},
 
+  snapToGrid      = false,
   autosize        = false,
   resizeGripSize  = {11, 11},
   dragGripSize    = {10, 10},
@@ -19,6 +20,7 @@ Control = Object:Inherit{
   tweakDraggable   = false,
   tweakResizable   = false,
 
+  minimumSize     = {50, 50}, --// Todo replace everywhere with the beneath!
   minWidth        = 10,
   minHeight       = 10,
   maxWidth        = 1e9,
@@ -44,6 +46,7 @@ Control = Object:Inherit{
 
   skin            = nil,
   skinName        = nil,
+  focused         = false,
 }
 
 local this = Control
@@ -107,7 +110,7 @@ function Control:New(obj)
   --// add children after UpdateClientArea! (so relative width/height can be applied correctly)
   if (cn) then
     for i=1,#cn do
-      obj:AddChild(cn[i], true)
+      obj:AddChild(cn[i],true)
     end
   end
 
@@ -263,8 +266,7 @@ function Control:GetRelativeBox()
     return {self.x,self.y,self.width,self.height}
   end
 
-  --// FIXME use pl & pt too!!!
-  local pl,pt,pw,ph = p:_GetMaxChildConstraints(self)
+  local _,_,pw,ph = p:_GetMaxChildConstraints(self)
 
   local givBounds = self._givenBounds
   local relBounds = self._relativeBounds
@@ -302,7 +304,7 @@ function Control:GetRelativeBox()
     end
   end
 
-  return {left, top, width, height}
+  return {left,top,width,height}
 end
 
 
@@ -330,11 +332,6 @@ function Control:UpdateClientArea()
     self._oldwidth_uca  = self.width
     self._oldheight_uca = self.height
   end
-
-if (self.debug) then
-  Spring.Echo(self.name, self.width, self.height, self._realignRequested)
-end
-
   self:Invalidate() --FIXME correct place?
 end
 
@@ -466,7 +463,7 @@ function Control:SetPos(x, y, w, h, clientArea, dontUpdateRelative)
         self._relativeBounds.top = false
         self._givenBounds.top = y
         self._relativeBounds.bottom = false
-        self._givenBounds.top = false
+        self._givenBounds.bottom = false
         changed = true
       end
     end
@@ -527,7 +524,7 @@ function Control:SetPosRelative(x, y, w, h, clientArea, dontUpdateRelative)
     if (not dontUpdateRelative) then
       if (self._relativeBounds.left ~= x) then
         self._relativeBounds.left = IsRelativeCoord(x) and x
-        self._givenBounds.left = x
+        self._givenBounds.left = IsRelativeCoord(x)
         changed = true
       end
     end
@@ -543,7 +540,7 @@ function Control:SetPosRelative(x, y, w, h, clientArea, dontUpdateRelative)
     if (not dontUpdateRelative) then
       if (self._relativeBounds.top ~= y) then
         self._relativeBounds.top = IsRelativeCoord(y) and y
-        self._givenBounds.top = y
+        self._givenBounds.top = IsRelativeCoord(y)
         changed = true
       end
     end
@@ -563,7 +560,7 @@ function Control:SetPosRelative(x, y, w, h, clientArea, dontUpdateRelative)
     if (not dontUpdateRelative) then
       if (self._relativeBounds.width ~= w) then
         self._relativeBounds.width = IsRelativeCoord(w) and w
-        self._givenBounds.width = w
+        self._givenBounds.width = true
         changed = true
       end
     end
@@ -582,7 +579,7 @@ function Control:SetPosRelative(x, y, w, h, clientArea, dontUpdateRelative)
     if (not dontUpdateRelative) then
       if (self._relativeBounds.height ~= h) then
         self._relativeBounds.height = IsRelativeCoord(h) and h
-        self._givenBounds.height = h
+        self._givenBounds.height = true
         changed = true
       end
     end
@@ -904,6 +901,10 @@ end
 
 
 function Control:DrawControl()
+  if self.snapToGrid then
+    self.x = math.floor(self.x) + 0.5
+    self.y = math.floor(self.y) + 0.5
+  end
   self:DrawBackground()
   self:DrawBorder()
 end
@@ -1105,6 +1106,10 @@ end
 function Control:MouseWheel(x, y, ...)
   local cx,cy = self:LocalToClient(x,y)
   return inherited.MouseWheel(self, cx, cy, ...)
+end
+
+function Control:KeyPress(...)
+  return inherited.KeyPress(self, ...)
 end
 
 --//=============================================================================

@@ -19,6 +19,7 @@ skin.general = {
   textColor   = {1,1,1,1},
 
   --padding         = {5, 5, 5, 5}, --// padding: left, top, right, bottom
+  backgroundColor = {0.1, 0.1, 0.1, 0.7},
 }
 
 
@@ -85,6 +86,8 @@ skin.panel = {
   TileImageBK = ":cl:tech_button.png",
   TileImageFG = ":cl:empty.png",
   tiles = {22, 22, 22, 22},
+
+  backgroundColor = {1, 1, 1, 0.6},
 
   DrawControl = DrawPanel,
 }
@@ -153,7 +156,7 @@ skin.treeview = {
 }
 
 skin.window = {
-  TileImage = ":c:tech_dragwindow.png",
+  TileImage = ":cl:tech_dragwindow.png",
   --TileImage = ":cl:tech_window.png",
   --TileImage = ":cl:window_tooltip.png",
   --tiles = {25, 25, 25, 25}, --// tile widths: left,top,right,bottom

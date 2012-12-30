@@ -322,6 +322,59 @@ function DrawButton(obj)
   end
 end
 
+--same code as in chili/Skins/default/skin.lua
+--should it be different?
+function DrawEditBox(obj)
+  gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawBackground, obj, obj.state)
+  gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawBorder, obj.x, obj.y, obj.width, obj.height, 1, obj.borderColor1, obj.borderColor1)
+
+
+  if (obj.text) then
+    local x = obj.x
+    local y = obj.y
+    local w = obj.width
+    local h = obj.height
+    local bt = obj.borderThickness
+
+    local txt = obj.text
+	local startPos = 1 + obj.offset
+	local newTxt = ""		
+	for i = startPos, #txt do
+		local tmp = string.sub(txt, startPos, i)
+		if obj.font:GetTextWidth(tmp) <= w then
+			newTxt = tmp
+		else
+			break
+		end
+	end
+	if obj.cursor <= obj.offset then		
+		obj.offset = obj.cursor - 1
+	elseif obj.cursor > obj.offset + #newTxt + 1 then		
+		obj.offset = obj.cursor - #newTxt
+	end
+	if #newTxt == 0 and #txt ~= 0 then
+		obj.offset = obj.offset - 1
+	end
+	local startPos = 1 + obj.offset
+	local newTxt = ""		
+	for i = startPos, #txt do
+		local tmp = string.sub(txt, startPos, i)
+		if obj.font:GetTextWidth(tmp) <= w then
+			newTxt = tmp
+		else
+			break
+		end
+	end
+	txt = newTxt
+    obj.font:DrawInBox(txt, x + bt, y, w, h, obj.align, obj.valign)
+	if obj.focused then
+	  local cursorTxt = string.sub(txt, 1, obj.cursor - 1 - obj.offset)
+	  local cursorX = obj.font:GetTextWidth(cursorTxt) + 1
+	  gl.BeginEnd(GL.LINE_STRIP, DrawCursor, x + cursorX, y, h)
+    end
+  end
+end
+
 --//=============================================================================
 --//
 
@@ -385,7 +438,7 @@ function DrawScrollPanelBorder(self)
   local clientX,clientY,clientWidth,clientHeight = unpack4(self.clientArea)
   local contX,contY,contWidth,contHeight = unpack4(self.contentArea)
 
-  gl.Color(1,1,1,1)
+  gl.Color(self.backgroundColor)
 
   do
       TextureHandler.LoadTexture(0,self.BorderTileImage,self)
@@ -415,7 +468,7 @@ function DrawScrollPanel(obj)
   local clientX,clientY,clientWidth,clientHeight = unpack4(obj.clientArea)
   local contX,contY,contWidth,contHeight = unpack4(obj.contentArea)
 
-  gl.Color(1,1,1,1)
+  gl.Color(obj.backgroundColor)
 
   if (obj.BackgroundTileImage) then
       TextureHandler.LoadTexture(0,obj.BackgroundTileImage,obj)
@@ -436,6 +489,8 @@ function DrawScrollPanel(obj)
       gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, obj.x,obj.y,width,height, skLeft,skTop,skRight,skBottom, tw,th, 0)
       gl.Texture(0,false)
   end
+  
+  gl.Color(1,1,1,1)
 
   if obj._vscrollbar then
     local x = obj.x + clientX + clientWidth
@@ -520,11 +575,12 @@ function DrawCheckbox(obj)
 
   local skLeft,skTop,skRight,skBottom = unpack4(obj.tiles)
 
-  local texInfo = gl.TextureInfo(obj.TileImageFG) or {xsize=1, ysize=1}
-  local tw,th = texInfo.xsize, texInfo.ysize
 
   gl.Color(1,1,1,1)
   TextureHandler.LoadTexture(0,obj.TileImageBK,obj)
+
+  local texInfo = gl.TextureInfo(obj.TileImageBK) or {xsize=1, ysize=1}
+  local tw,th = texInfo.xsize, texInfo.ysize
     gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, x,y,w,h, skLeft,skTop,skRight,skBottom, tw,th, 0)
   --gl.Texture(0,false)
 
