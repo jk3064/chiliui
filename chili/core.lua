@@ -39,7 +39,7 @@ local includes = {
 
 local Chili = widget
 
-Chili.CHILI_DIRNAME = LUAUI_DIRNAME.."Widgets/chili/"
+Chili.CHILI_DIRNAME = CHILI_DIRNAME
 
 if (-1>0) then
   Chili = {}

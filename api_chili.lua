@@ -24,12 +24,12 @@ local Chili
 local screen0
 local th
 local tk
-
+CHILI_DIRNAME = "LuaUI/Widgets/chili/" --change as needed
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 function widget:Initialize()
-  Chili = VFS.Include(LUAUI_DIRNAME.."Widgets/chili/core.lua")
+  Chili = VFS.Include(CHILI_DIRNAME.."core.lua")
 
   screen0 = Chili.Screen:New{}
   th = Chili.TextureHandler
