@@ -48,6 +48,7 @@ function _DrawTiledTexture(x,y,w,h, skLeft,skTop,skRight,skBottom, texw,texh, te
     --//topleft
     gl.MultiTexCoord(texIndex,0,0)
     gl.Vertex(x,      y)
+
     gl.MultiTexCoord(texIndex,0,txTop)
     gl.Vertex(x,      y+skTop)
     gl.MultiTexCoord(texIndex,txLeft,0)
@@ -334,6 +335,27 @@ function DrawButton(obj)
   end
 end
 
+function _DrawTriangle(obj)
+  local w = obj.width
+  local x = obj.x
+  local y = obj.y
+  local w = obj.width
+  local h = obj.height
+  local bt = obj.borderThickness
+
+  local tw = 10
+  gl.Color(obj.focusColor)
+  gl.Vertex(x + w - tw*1.5, y + (h - tw) * 0.5)
+  gl.Vertex(x + w - tw*0.5, y + (h - tw) * 0.5)
+  gl.Vertex(x + w - tw, y + tw + (h - tw) * 0.5)
+end
+
+function DrawComboBox(obj)
+    DrawButton(obj)
+    --draw triangle that indicates this is a combobox
+    gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTriangle, obj)
+end
+
 
 function DrawEditBox(obj)
 	local skLeft,skTop,skRight,skBottom = unpack4(obj.tiles)
@@ -396,8 +418,9 @@ function DrawEditBox(obj)
 			local cursorTxt = obj.text:sub(obj.offset, obj.cursor - 1)
 			local cursorX = obj.font:GetTextWidth(cursorTxt)
 
-			local as = math.sin(os.clock() * 4);
-			local ac = math.cos(os.clock() * 4);
+            local dt = os.clock() - obj._interactedTime
+			local as = math.sin(dt * 16);
+			local ac = math.cos(dt * 16);
 			if (as < 0) then as = 0 end
 			if (ac < 0) then ac = 0 end
 			local alpha = as + ac
@@ -406,7 +429,7 @@ function DrawEditBox(obj)
 
 			local cc = obj.cursorColor
 			gl.Color(cc[1], cc[2], cc[3], cc[4] * alpha)
-			gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawCursor, obj.x + cursorX + clientX - 1, obj.y + clientY, 3, clientHeight)
+			gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawCursor, obj.x + cursorX + clientX - 1, obj.y + clientY, 2, clientHeight)
 		end
 	end
 end
