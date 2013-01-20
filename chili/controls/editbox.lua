@@ -99,7 +99,7 @@ function EditBox:Update(...)
 	if self.state.focused then
 		self:RequestUpdate()
 		if (os.clock() >= (self._nextCursorRedraw or -math.huge)) then
-			self._nextCursorRedraw = os.clock() + 0.1 --10FPS
+			self._nextCursorRedraw = os.clock() + 0.02 --50FPS
 			self:Invalidate()
 		end
 	end

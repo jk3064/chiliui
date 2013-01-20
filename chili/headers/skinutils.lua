@@ -419,8 +419,8 @@ function DrawEditBox(obj)
 			local cursorX = obj.font:GetTextWidth(cursorTxt)
 
             local dt = os.clock() - obj._interactedTime
-			local as = math.sin(dt * 8);
-			local ac = math.cos(dt * 8);
+			local as = math.sin(dt * 16);
+			local ac = math.cos(dt * 16);
 			if (as < 0) then as = 0 end
 			if (ac < 0) then ac = 0 end
 			local alpha = as + ac
@@ -429,7 +429,7 @@ function DrawEditBox(obj)
 
 			local cc = obj.cursorColor
 			gl.Color(cc[1], cc[2], cc[3], cc[4] * alpha)
-			gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawCursor, obj.x + cursorX + clientX - 1, obj.y + clientY, 3, clientHeight)
+			gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawCursor, obj.x + cursorX + clientX - 1, obj.y + clientY, 2, clientHeight)
 		end
 	end
 end
