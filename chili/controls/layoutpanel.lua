@@ -477,12 +477,12 @@ function LayoutPanel:_LayoutChildrenResizeItems()
 
       if (self.weightedResize) then
         --// weighted Position
-        if dir1 == 1 then
+        if self._columns == 1 then
           childPosx = 0
         else
           childPosx = childPosx + childWidth
         end
-        if dir2 == 1 then
+        if self._rows == 1 then
           childPosy = 0
         else
           childPosy = childPosy + childHeight
