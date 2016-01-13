@@ -824,47 +824,47 @@ function LayoutPanel:MultiRectSelect(item1,item2,append)
   --// note: this functions does NOT update self._lastSelected!
 
   --// select all items in the convex hull of those 2 items
-  local cells = self._cells
-  local itemPadding = self.itemPadding
-
-  local cell1,cell2 = cells[item1],cells[item2]
-
-  local convexHull = {
-    math.min(cell1[1],cell2[1]),
-    math.min(cell1[2],cell2[2]),
-  }
-  convexHull[3] = math.max(cell1[1]+cell1[3],cell2[1]+cell2[3]) - convexHull[1]
-  convexHull[4] = math.max(cell1[2]+cell1[4],cell2[2]+cell2[4]) - convexHull[2]
-
-  local newSelected = self.selectedItems
-  if (not append) then
-    newSelected = {}
-  end
-
-  for i=1,#cells do
-    local cell  = cells[i]
-    local cellbox = ExpandRect(cell,itemPadding)
-    if (AreRectsOverlapping(convexHull,cellbox)) then
-      newSelected[i] = true
-    end
-  end
-
-  if (not append) then
-    local oldSelected = self.selectedItems
-    self.selectedItems = newSelected
-    for itemIdx,selected in pairs(oldSelected) do
-      if (selected)and(not newSelected[itemIdx]) then
-        self:CallListeners(self.OnSelectItem, itemIdx, false)
-      end
-    end
-    for itemIdx,selected in pairs(newSelected) do
-      if (selected)and(not oldSelected[itemIdx]) then
-        self:CallListeners(self.OnSelectItem, itemIdx, true)
-      end
-    end
-  end
-
-  self:Invalidate()
+	local cells = self._cells
+	local itemPadding = self.itemPadding
+	
+	local cell1,cell2 = cells[item1],cells[item2]
+	
+	local convexHull = {
+		math.min(cell1[1],cell2[1]),
+		math.min(cell1[2],cell2[2]),
+	}
+	convexHull[3] = math.max(cell1[1]+cell1[3],cell2[1]+cell2[3]) - convexHull[1]
+	convexHull[4] = math.max(cell1[2]+cell1[4],cell2[2]+cell2[4]) - convexHull[2]
+	
+	local oldSelected = {} --// need to copy tables to not overwrite things
+	for k, v in pairs(self.selectedItems) do
+		oldSelected[k] = v
+	end
+	self.selectedItems = append and self.selectedItems or {}			
+	
+	for i=1,#cells do
+		local cell  = cells[i]
+		local cellbox = ExpandRect(cell,itemPadding)
+		if (AreRectsOverlapping(convexHull,cellbox)) then
+			self.selectedItems[i] = true					
+		end
+	end			
+	
+	if (not append) then								
+		for itemIdx,selected in pairs(oldSelected) do
+			if (selected)and(not self.selectedItems[itemIdx]) then
+				self:CallListeners(self.OnSelectItem, itemIdx, false)
+			end
+		end
+	end			
+	--// this needs to happen either way
+	for itemIdx,selected in pairs(self.selectedItems) do
+		if (selected)and(not oldSelected[itemIdx]) then
+			self:CallListeners(self.OnSelectItem, itemIdx, true)
+		end
+	end				
+	
+	self:Invalidate()
 end
 
 --- Toggle item selection
