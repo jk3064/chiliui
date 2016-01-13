@@ -836,7 +836,7 @@ function LayoutPanel:MultiRectSelect(item1,item2,append)
 	convexHull[3] = math.max(cell1[1]+cell1[3],cell2[1]+cell2[3]) - convexHull[1]
 	convexHull[4] = math.max(cell1[2]+cell1[4],cell2[2]+cell2[4]) - convexHull[2]
 	
-	local oldSelected = {} -- need to copy tables to not overwrite things
+	local oldSelected = {} --// need to copy tables to not overwrite things
 	for k, v in pairs(self.selectedItems) do
 		oldSelected[k] = v
 	end
@@ -857,7 +857,7 @@ function LayoutPanel:MultiRectSelect(item1,item2,append)
 			end
 		end
 	end			
-	-- this needs to happen either way
+	--// this needs to happen either way
 	for itemIdx,selected in pairs(self.selectedItems) do
 		if (selected)and(not oldSelected[itemIdx]) then
 			self:CallListeners(self.OnSelectItem, itemIdx, true)
